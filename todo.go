@@ -3,7 +3,10 @@ package main
 import (
 	"errors"
 	"fmt"
+	"os"
+	"strconv"
 	"time"
+    "github.com/aquasecurity/table"
 )
 
 type Todo struct {
@@ -40,16 +43,68 @@ func (todos *Todos) validate(index int) error {
 	return nil
 }
 
-
 // deleting a task by index
-func (todos *Todos) delete(index int) error{
+func (todos *Todos) delete(index int) error {
 	t := *todos
 
-	if err := t.validate(index); err!=nil {
-        return err
+	if err := t.validate(index); err != nil {
+		return err
 	}
 
-	*todos = append(t[:index],t[index+1:]...)
+	*todos = append(t[:index], t[index+1:]...)
 
-	return  nil
+	return nil
+}
+
+func (todos *Todos) toggle(index int) error {
+	t := *todos
+
+	if err := t.validate(index); err != nil {
+		return err
+	}
+	iscompleted := t[index].Completed
+
+	if !iscompleted {
+		completedtime := time.Now()
+		t[index].CompletedAt = &completedtime
+
+	}
+
+	t[index].Completed = !iscompleted
+
+	return nil
+}
+
+func (todos *Todos) edit(index int, title string) error {
+	t := *todos
+
+	if err := t.validate(index); err != nil {
+		return err
+	}
+
+	t[index].Title = title
+
+	return nil
+}
+
+func (todos *Todos) print() {
+	table := table.New(os.Stdout)
+	table.SetRowLines(false)
+	table.SetHeaders("#", "Title", "Completed", "Created At", "Completed At")
+
+	for index, t := range *todos {
+		completed := "❌"
+		completedAt := ""
+		if t.Completed {
+			completed = "👍"
+			if t.CompletedAt != nil {
+				completedAt = t.CompletedAt.Format(time.RFC1123)
+			}
+		}
+
+		table.AddRow(strconv.Itoa(index), t.Title, completed, t.CreatedAt.Format(time.RFC1123), completedAt)
+	}
+
+	table.Render()
+
 }
