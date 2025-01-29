@@ -6,7 +6,8 @@ import (
 	"os"
 	"strconv"
 	"time"
-    "github.com/aquasecurity/table"
+
+	"github.com/aquasecurity/table"
 )
 
 type Todo struct {
@@ -20,7 +21,7 @@ type Todos []Todo
 
 // adding a task
 
-func (todos *Todos) add(title string) {
+func (todos *Todos) Add(title string) {
 	todo := Todo{
 		Title:       title,
 		Completed:   false,
@@ -44,7 +45,7 @@ func (todos *Todos) validate(index int) error {
 }
 
 // deleting a task by index
-func (todos *Todos) delete(index int) error {
+func (todos *Todos) Delete(index int) error {
 	t := *todos
 
 	if err := t.validate(index); err != nil {
@@ -56,7 +57,7 @@ func (todos *Todos) delete(index int) error {
 	return nil
 }
 
-func (todos *Todos) toggle(index int) error {
+func (todos *Todos) Toggle(index int) error {
 	t := *todos
 
 	if err := t.validate(index); err != nil {
@@ -75,7 +76,7 @@ func (todos *Todos) toggle(index int) error {
 	return nil
 }
 
-func (todos *Todos) edit(index int, title string) error {
+func (todos *Todos) Edit(index int, title string) error {
 	t := *todos
 
 	if err := t.validate(index); err != nil {
@@ -87,7 +88,7 @@ func (todos *Todos) edit(index int, title string) error {
 	return nil
 }
 
-func (todos *Todos) print() {
+func (todos *Todos) Print() {
 	table := table.New(os.Stdout)
 	table.SetRowLines(false)
 	table.SetHeaders("#", "Title", "Completed", "Created At", "Completed At")
